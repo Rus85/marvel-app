@@ -1,91 +1,56 @@
 import './charInfo.scss';
-import { Component } from 'react';
-import MarvelService from '../../services/MarvelServices';
+import { useState, useEffect } from 'react';
+import useMarvelService from '../../services/MarvelServices';
 import Skeleton from '../skeleton/Skeleton'
 import Rocket from '../errors/Rocket.gif'
 import ErrorGif from '../errors/error.gif'
 import PropTypes from 'prop-types'
 
-class CharInfo extends Component {
+const CharInfo = (props) => {
 
-    state = {
-        char: null,
-        loading: false,
-        error: false
-    }
-
-    marvelService = new MarvelService()
+    const [char, setChar] = useState(null)
 
 
-    componentDidMount() {
-        this.updateChar()
-    }
+    const {loading, error, getCharacter, clearError} = useMarvelService()
+
+    useEffect(() => {
+        updateChar()
+    }, [props.charId])
 
 
-    componentDidUpdate(prevProps) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar()
-        }
-    }
-
-
-    updateChar = () => {
-        const { charId } = this.props
+    const updateChar = () => {
+        const { charId } = props
 
         if (!charId) {
             return
         }
 
-
-        this.onCharLoading()
-
-        this.marvelService
-            .getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError)
+        clearError()
+        getCharacter(charId)
+            .then(onCharLoaded)
+            
 
     }
 
-
-    onCharLoaded = (char) => {
-        this.setState({
-            char,
-            loading: false
-        })
-    }
-
-    onCharLoading = () => {
-        this.setState({
-            loading: true
-        })
-    }
-
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
-    }
-
-    render() {
-
-        const { char, loading, error } = this.state
-
-        const skeleton = char || loading || error ? null : <Skeleton />
-        const loadingGif = loading ? <img style={{ margin: '0 auto', display: 'block', width: '100px', height: '100px' }} src={Rocket} alt='Loading...' /> : null
-        const errorGif = error ? <img style={{ margin: '0 auto', display: 'block', width: '200px', height: '200px' }} src={ErrorGif} alt='Loading...' /> : null
-        const content = !(loading || error || !char) ? <View char={char} /> : null
-
-        return (
-            <div className="char__info">
-                {skeleton}
-                {loadingGif}
-                {errorGif}
-                {content}
-            </div>
-        )
-    }
+    const onCharLoaded = (char) => {
+        setChar(char)
 }
+
+    const skeleton = char || loading || error ? null : <Skeleton />
+    const loadingGif = loading ? <img style={{ margin: '0 auto', display: 'block', width: '100px', height: '100px' }} src={Rocket} alt='Loading...' /> : null
+    const errorGif = error ? <img style={{ margin: '0 auto', display: 'block', width: '200px', height: '200px' }} src={ErrorGif} alt='Loading...' /> : null
+    const content = !(loading || error || !char) ? <View char={char} /> : null
+
+    return (
+        <div className="char__info">
+            {skeleton}
+            {loadingGif}
+            {errorGif}
+            {content}
+        </div>
+    )
+}
+
 
 const View = ({ char }) => {
 
