@@ -8,18 +8,11 @@ import PropTypes from 'prop-types';
 const CharList = (props) => {
 
     const [charList, setCharList] = useState([])
-    // const [loading, setLoading] = useState(true)
-    // const [error, setError] = useState(false)
     const [newItemLoading, setNewItemLoading] = useState(false)
     const [offset, setOffset] = useState(210)
     const [onEnded, setOnEnded] = useState(false)
-    // const [characterSelected, setCharacterSelected] = useState('')
 
-    const {loading, error, getAllCharacters} = useMarvelService()
-
-
-    // const marvelService = new MarvelService()
-
+    const { loading, error, getAllCharacters } = useMarvelService()
 
     useEffect(() => {
         onRequest(offset, true)
@@ -27,16 +20,9 @@ const CharList = (props) => {
 
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true)
-        // setNewItemLoading(false)
-        // onCharListLoading()
         getAllCharacters(offset)
             .then(onCharListLoaded)
-            // .catch(onError)
     }
-
-    // const onCharListLoading = () => {
-    //     setNewItemLoading(true)
-    // }
 
     const onCharListLoaded = (newCharList) => {
 
@@ -47,17 +33,11 @@ const CharList = (props) => {
         }
 
         setCharList(charList => [...charList, ...newCharList])
-        // setLoading(false)
         setNewItemLoading(false)
         setOffset(offset => offset + 9)
         setOnEnded(onEnded => ended)
 
     }
-
-    // const onError = () => {
-    //     setError(true)
-    //     setLoading(false)
-    // }
 
     const itemRefs = useRef([])
 
@@ -75,9 +55,6 @@ const CharList = (props) => {
                 imgStyle = { 'objectFit': 'unset' };
             }
 
-            // const active = this.state.characterSelected === item.id,
-            //     clazz = active ? 'char__item char__item_selected' : 'char__item';
-
             return (
                 <li
                     className='char__item'
@@ -85,7 +62,6 @@ const CharList = (props) => {
                     ref={el => itemRefs.current[i] = el}
                     key={item.id}
                     onClick={() => {
-                        // this.setState({ characterSelected: item.id })
                         props.onCharSelected(item.id)
                         focusOnItem(i)
                     }}
@@ -110,13 +86,10 @@ const CharList = (props) => {
     }
 
 
-    // const { charList, loading, error, newItemLoading, offset, onEnded } = this.state;
-
     const items = renderItems(charList);
 
     const errorGif = error ? <img style={{ margin: '0 auto', display: 'block', width: '200px', height: '200px' }} src={ErrorGif} alt='Loading...' /> : null;
     const rocketGif = loading && !newItemLoading ? <img style={{ margin: '0 auto', display: 'block', width: '100px', height: '100px' }} src={Rocket} alt='Loading...' /> : null;
-    // const content = !(loading || error) ? items : null;
 
     return (
         <div className="char__list">
